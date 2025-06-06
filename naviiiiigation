@@ -1,0 +1,212 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  StyleSheet,
+} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+function HomeScreen({ navigation }) {
+  const [name, setName] = useState('');
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>enter your name:</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Name"
+        value={name}
+        onChangeText={setName}
+      />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('Day1', { userName: name })}
+      >
+        <Text style={styles.buttonText}>Continue</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+function Day1Screen({ route, navigation }) {
+  const { userName } = route.params;
+  const [note, setNote] = useState('');
+  const [notes, setNotes] = useState([]);
+
+  const saveNote = () => {
+    if (note.trim()) {
+      setNotes([...notes, note]);
+      setNote('');
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Привіт, {userName}!</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Як пройшов твій день?"
+        value={note}
+        onChangeText={setNote}
+      />
+      <TouchableOpacity style={styles.button} onPress={saveNote}>
+        <Text style={styles.buttonText}>Зберегти</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('History', { notes })}
+      >
+        <Text style={styles.buttonText}>Переглянути історію</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+function HistoryScreen({ route }) {
+  const { notes } = route.params;
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Історія записів:</Text>
+      <FlatList
+        data={notes}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => <Text style={styles.note}>{item}</Text>}
+      />
+    </View>
+  );
+}
+
+const Stack = createNativeStackNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Day1" component={Day1Screen} />
+        <Stack.Screen name="History" component={HistoryScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  greeting: {
+    fontSize: 24,
+    marginBottom: 20,
+  },
+  button: {
+    backgroundColor: 'rgb(145, 201, 168)',
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+  },
+  image: {
+    width: 150,
+    height: 150,
+  },
+  screen: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 20,
+  },
+  diaryContainer: {
+    padding: 20,
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  product: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgb(163, 122, 83)',
+    borderRadius: 15,
+    backgroundColor: 'rgb(246, 236, 223)',
+    padding: 10,
+    marginBottom: 15,
+  },
+  checkbox: {
+    marginRight: 10,
+  },
+  productInfo: {
+    flexDirection: 'column',
+  },
+  name: {
+    fontSize: 16,
+  },
+  kcal: {
+    fontSize: 14,
+    color: 'gray',
+  },
+  total: {
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  goalOption: {
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 5,
+    backgroundColor: '#FDF9F2',
+    borderWidth: 1,
+    borderColor: 'gray',
+    width: '80%',
+    alignItems: 'center',
+  },
+  selectedOption: {
+    backgroundColor: 'rgb(145, 201, 168)',
+    borderColor: 'green',
+  },
+  optionText: {
+    fontSize: 16,
+  },
+  mealOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10,
+    marginVertical: 5,
+    width: '80%',
+  },
+  icon: {
+    width: 30,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 10,
+    padding: 10,
+    width: '80%',
+    marginBottom: 20,
+  },
+  note: {
+    fontSize: 16,
+    marginVertical: 5,
+    padding: 10,
+    backgroundColor: '#F0EAE2',
+    borderRadius: 5,
+  },
+});
